@@ -27,6 +27,28 @@ void assign_clusters() {
 
 }
 
-void compute_centroids() {
+inline void static compute_centroid(Point cluster, PArray clusterPoints, int clusterPointsSize) {
+    float sumX = 0;
+    float sumY = 0;
 
+    for (int i = 0; i < clusterPointsSize; ++i) {
+        Point point = clusterPoints[i];
+
+        sumX += point->x;
+        sumY += point->y;
+    }
+
+    cluster->x = sumX / clusterPointsSize;
+    cluster->y = sumY / clusterPointsSize;
+}
+
+void compute_centroids(
+        PArray clusters,
+        int numberOfClusters,
+        PArray *clustersPoints,
+        int *clustersPointsSizes
+) {
+    for (int i = 0; i < numberOfClusters; ++i) {
+        compute_centroid(clusters[i], clustersPoints[i], clustersPointsSizes[i]);
+    }
 }

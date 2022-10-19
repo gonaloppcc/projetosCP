@@ -21,6 +21,6 @@ PArray init_clusters(int k);
 
 void assign_clusters();
 
-void compute_centroids();
+void compute_centroids(PArray clusters, int numberOfClusters, PArray *clustersPoints, int *clustersPointsSizes);
 
 #endif
