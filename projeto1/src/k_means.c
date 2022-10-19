@@ -21,7 +21,7 @@ int main() {
     printf("Hello from main function!\n");
 
     init_vector();
-    Array clusters = init_clusters(K);
+    PArray clusters = init_clusters(K);
 
     // Define the flux of the program here
 

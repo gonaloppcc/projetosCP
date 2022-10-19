@@ -10,14 +10,14 @@ struct point {
 
 typedef struct point *Point;
 
-typedef Point *Array;
+typedef Point *PArray;
 
 
 /* --------------------------------------------- Functions declarations --------------------------------------------- */
 
 void init_vector();
 
-Array init_clusters(int k);
+PArray init_clusters(int k);
 
 void assign_clusters();
 
