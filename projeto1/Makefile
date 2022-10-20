@@ -6,16 +6,18 @@ EXEC = k_means
 
 CFLAGS = -g
 
+LDFLAGS = -lm
+
 .DEFAULT_GOAL = k_means
 
 setup:
 	mkdir $(BIN)
 
 k_means: $(SRC)k_means.c $(BIN)utils.o
-	$(CC) $(CFLAGS) $(SRC)k_means.c $(BIN)utils.o -o $(BIN)$(EXEC)
+	$(CC) $(CFLAGS) $(SRC)k_means.c $(BIN)utils.o -o $(BIN)$(EXEC) $(LDFLAGS)
 
 $(BIN)utils.o: $(SRC)utils.c $(INCLUDES)utils.h
-	$(CC) $(CFLAGS) -c $(SRC)utils.c -o $(BIN)utils.o
+	$(CC) $(CFLAGS) -c $(SRC)utils.c -o $(BIN)utils.o $(LDFLAGS)
 
 clean:
 	rm -r bin/*
