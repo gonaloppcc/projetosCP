@@ -20,8 +20,10 @@
 int main() {
     printf("Hello from main function!\n");
 
-    init_vector();
+    PArray vector = init_vector(N);
     PArray clusters = init_clusters(K);
+
+    assign_clusters(vector, N, clusters, K);
 
     // Define the flux of the program here
 
@@ -33,5 +35,14 @@ int main() {
     }
     printf("Iterations: Undefined\n");
 
+    /* This print is just for debugging, enabling it will flood the console with garbage...
+       TODO: Delete this
+    
+    printf("Printing samples...\n");
+    for (int i = 0; i < N; ++i) {
+        printf("(%f,%f) : Cluster: %d\n", vector[i]->x, vector[i]->y, vector[i]->cluster);
+    }
+    
+    */
     return 0;
 }
