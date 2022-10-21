@@ -50,35 +50,35 @@ inline static float euclidean_distance(Cluster cluster, Point point) {
 /**
  * @brief Assigns the closest centroid to each sample
  * 
- * @param vector Array of samples
+ * @param points Array of samples
  * @param n Number of samples
  * @param clusters Array of centroids
  * @param k Number of clusters
 */
-void assign_clusters(PArray vector, int n, CArray clusters, int k) {
+void assign_clusters(PArray points, int n, CArray clusters, int k) {
     for (int i = 0; i < n; i++) {
         int closest = 0;
         float shortest_dist = __FLT_MAX__; // Set maximum possible distance
 
         for (int o = 0; o < k; o++) {
             // Euclidean distance: dist = sqrt( (x1-x2)^2 + (y1-y2)^2 )
-            float dist = euclidean_distance(clusters[o], vector[i]);
+            float dist = euclidean_distance(clusters[o], points[i]);
             if (dist < shortest_dist) {
                 shortest_dist = dist;
                 closest = o;
             }
         }
 
-        vector[i]->cluster = closest;
+        points[i]->cluster = closest;
         clusters[closest]->points_size++;
     }
 }
 
 void compute_centroids(
-        CArray clusters,
-        int k,
         PArray points,
-        int n
+        int n,
+        CArray clusters,
+        int k
 ) {
     float *sum_clusters_points = (float *) calloc(k * 2, sizeof(float));
 
@@ -94,6 +94,9 @@ void compute_centroids(
 
         cluster->x = sum_clusters_points[i * 2] / cluster->points_size;
         cluster->y = sum_clusters_points[i * 2 + 1] / cluster->points_size;
+
+        // Reset points_size field
+        cluster->points_size = 0;
     }
 
     free(sum_clusters_points);

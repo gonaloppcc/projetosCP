@@ -30,8 +30,8 @@ PArray init_vector(int n);
 
 CArray init_clusters(int k);
 
-void assign_clusters(PArray vector, int n, CArray clusters, int k);
+void assign_clusters(PArray points, int n, CArray clusters, int k);
 
-void compute_centroids(CArray clusters, int k, PArray points, int n);
+void compute_centroids(PArray points, int n, CArray clusters, int k);
 
 #endif
