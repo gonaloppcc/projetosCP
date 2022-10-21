@@ -19,10 +19,10 @@
 int main() {
     printf("Hello from main function!\n");
 
-    PArray vector = init_vector(N);
-    CArray clusters = init_clusters(vector, K);
+    PArray samples = init_samples(N);
+    CArray clusters = init_clusters(samples, K);
 
-    assign_clusters(vector, N, clusters, K);
+    assign_clusters(samples, N, clusters, K);
 
     // TODO: Define the flux of the program here
 
@@ -30,7 +30,7 @@ int main() {
     // Program Output
     printf("N = %d, K = %d\n", N, K);
     for (int i = 0; i < K; ++i) {
-        printf("Center: (%f, %f) : Size: %d\n", clusters[i]->x, clusters[i]->y, clusters[i]->points_size);
+        printf("Center: (%f, %f) : Size: %d\n", clusters[i]->x, clusters[i]->y, clusters[i]->samples_size);
     }
     printf("Iterations: Undefined\n");
 
@@ -39,7 +39,7 @@ int main() {
     
     printf("Printing samples...\n");
     for (int i = 0; i < N; ++i) {
-        printf("(%f,%f) : Cluster: %d\n", vector[i]->x, vector[i]->y, vector[i]->cluster);
+        printf("(%f,%f) : Cluster: %d\n", samples[i]->x, samples[i]->y, samples[i]->cluster);
     }
     
     */
