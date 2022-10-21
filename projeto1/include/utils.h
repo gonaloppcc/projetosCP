@@ -13,7 +13,7 @@ struct cluster {
     float x;
     float y;
 
-    int points_size;
+    int samples_size; // Number of samples associated with this cluster
 };
 
 typedef struct point *Point;
@@ -26,12 +26,12 @@ typedef Cluster *CArray;
 
 /* --------------------------------------------- Functions declarations --------------------------------------------- */
 
-PArray init_vector(int n);
+PArray init_samples(int n);
 
-CArray init_clusters(PArray points, int k);
+CArray init_clusters(PArray samples, int k);
 
-void assign_clusters(PArray points, int n, CArray clusters, int k);
+void assign_clusters(PArray samples, int n, CArray clusters, int k);
 
-void compute_centroids(PArray points, int n, CArray clusters, int k);
+void compute_centroids(PArray samples, int n, CArray clusters, int k);
 
 #endif

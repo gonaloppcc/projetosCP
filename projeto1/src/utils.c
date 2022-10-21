@@ -7,11 +7,11 @@
 /**
  * @brief Initializes the clusters with the respective first samples
  *
- * @param points Array of samples
+ * @param samples Array of samples
  * @param k Number of clusters to create
  * @return CArray with all the generated clusters
  */
-CArray init_clusters(PArray points, int k) {
+CArray init_clusters(PArray samples, int k) {
     // TODO: This function inits the clusters by random, I don't if this is the intended action
     srand(SEED);
 
@@ -20,34 +20,34 @@ CArray init_clusters(PArray points, int k) {
     for (int i = 0; i < k; ++i) {
         clusters[i] = (Cluster) malloc(sizeof(struct cluster));
 
-        clusters[i]->x = points[i]->x;
-        clusters[i]->y = points[i]->y;
-        clusters[i]->points_size = 0;
+        clusters[i]->x = samples[i]->x;
+        clusters[i]->y = samples[i]->y;
+        clusters[i]->samples_size = 0;
     }
 
     return clusters;
 }
 
 /**
- * @brief Initializes the vector of samples randomly
+ * @brief Initializes the samples randomly
  * 
  * @param n Number of samples to create
  * @return PArray with all the generated samples
 */
-PArray init_vector(int n) {
+PArray init_samples(int n) {
     srand(SEED);
 
-    PArray vector = malloc(sizeof(Point) * n);
+    PArray samples = malloc(sizeof(Point) * n);
 
     for (int i = 0; i < n; i++) {
-        vector[i] = (Point) malloc(sizeof(struct point));
+        samples[i] = (Point) malloc(sizeof(struct point));
 
-        vector[i]->x = (float) rand() / RAND_MAX;
-        vector[i]->y = (float) rand() / RAND_MAX;
-        vector[i]->cluster = -1;
+        samples[i]->x = (float) rand() / RAND_MAX;
+        samples[i]->y = (float) rand() / RAND_MAX;
+        samples[i]->cluster = -1;
     }
 
-    return vector;
+    return samples;
 }
 
 inline static float euclidean_distance(Cluster cluster, Point point) {
@@ -57,62 +57,62 @@ inline static float euclidean_distance(Cluster cluster, Point point) {
 /**
  * @brief Assigns the closest centroid to each sample
  * 
- * @param points Array of samples
+ * @param samples Array of samples
  * @param n Number of samples
  * @param clusters Array of centroids
  * @param k Number of clusters
 */
-void assign_clusters(PArray points, int n, CArray clusters, int k) {
+void assign_clusters(PArray samples, int n, CArray clusters, int k) {
     for (int i = 0; i < n; i++) {
         int closest = 0;
         float shortest_dist = __FLT_MAX__; // Set maximum possible distance
 
         for (int o = 0; o < k; o++) {
             // Euclidean distance: dist = sqrt( (x1-x2)^2 + (y1-y2)^2 )
-            float dist = euclidean_distance(clusters[o], points[i]);
+            float dist = euclidean_distance(clusters[o], samples[i]);
             if (dist < shortest_dist) {
                 shortest_dist = dist;
                 closest = o;
             }
         }
 
-        points[i]->cluster = closest;
-        clusters[closest]->points_size++;
+        samples[i]->cluster = closest;
+        clusters[closest]->samples_size++;
     }
 }
 
 /**
  * @brief Computes the centroids, assigning a new position for each cluster
  *
- * @param points Array of samples
+ * @param samples Array of samples
  * @param n Number of samples
  * @param clusters Array of centroids
  * @param k Number of clusters
  */
 void compute_centroids(
-        PArray points,
+        PArray samples,
         int n,
         CArray clusters,
         int k
 ) {
-    float *sum_clusters_points = (float *) calloc(k * 2, sizeof(float));
+    float *sum_clusters_samples = (float *) calloc(k * 2, sizeof(float));
 
     for (int i = 0; i < n; ++i) {
-        Point point = points[i];
+        Point point = samples[i];
 
-        sum_clusters_points[point->cluster * 2] += point->x;
-        sum_clusters_points[point->cluster * 2 + 1] += point->y;
+        sum_clusters_samples[point->cluster * 2] += point->x;
+        sum_clusters_samples[point->cluster * 2 + 1] += point->y;
     }
 
     for (int i = 0; i < k; ++i) {
         Cluster cluster = clusters[i];
 
-        cluster->x = sum_clusters_points[i * 2] / cluster->points_size;
-        cluster->y = sum_clusters_points[i * 2 + 1] / cluster->points_size;
+        cluster->x = sum_clusters_samples[i * 2] / cluster->samples_size;
+        cluster->y = sum_clusters_samples[i * 2 + 1] / cluster->samples_size;
 
-        // Reset points_size field
-        cluster->points_size = 0;
+        // Reset samples_size field
+        cluster->samples_size = 0;
     }
 
-    free(sum_clusters_points);
+    free(sum_clusters_samples);
 }
