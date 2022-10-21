@@ -7,6 +7,7 @@
 /**
  * @brief Initializes the clusters with the respective first samples
  *
+ * @param points Array of samples
  * @param k Number of clusters to create
  * @return CArray with all the generated clusters
  */
