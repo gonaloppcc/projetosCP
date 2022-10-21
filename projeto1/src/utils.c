@@ -10,7 +10,7 @@
  * @param k Number of clusters to create
  * @return CArray with all the generated clusters
  */
-CArray init_clusters(int k) {
+CArray init_clusters(PArray points, int k) {
     // TODO: This function inits the clusters by random, I don't if this is the intended action
     srand(SEED);
 
@@ -19,8 +19,8 @@ CArray init_clusters(int k) {
     for (int i = 0; i < k; ++i) {
         clusters[i] = (Cluster) malloc(sizeof(struct cluster));
 
-        clusters[i]->x = (float) rand() / RAND_MAX;
-        clusters[i]->y = (float) rand() / RAND_MAX;
+        clusters[i]->x = points[i]->x;
+        clusters[i]->y = points[i]->y;
         clusters[i]->points_size = 0;
     }
 
@@ -80,6 +80,14 @@ void assign_clusters(PArray points, int n, CArray clusters, int k) {
     }
 }
 
+/**
+ * @brief Computes the centroids, assigning a new position for each cluster
+ *
+ * @param points Array of samples
+ * @param n Number of samples
+ * @param clusters Array of centroids
+ * @param k Number of clusters
+ */
 void compute_centroids(
         PArray points,
         int n,
