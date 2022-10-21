@@ -9,19 +9,29 @@ struct point {
     int cluster;
 };
 
+struct cluster {
+    float x;
+    float y;
+
+    int points_size;
+};
+
 typedef struct point *Point;
 
 typedef Point *PArray;
 
+typedef struct cluster *Cluster;
+
+typedef Cluster *CArray;
 
 /* --------------------------------------------- Functions declarations --------------------------------------------- */
 
 PArray init_vector(int n);
 
-PArray init_clusters(int k);
+CArray init_clusters(int k);
 
-void assign_clusters(PArray vector, int n, PArray clusters, int k);
+void assign_clusters(PArray vector, int n, CArray clusters, int k);
 
-void compute_centroids(PArray clusters, int numberOfClusters, PArray *clustersPoints, int *clustersPointsSizes);
+void compute_centroids(CArray clusters, int k, PArray points, int n);
 
 #endif

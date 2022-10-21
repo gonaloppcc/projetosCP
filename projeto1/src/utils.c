@@ -4,17 +4,18 @@
 
 #define SEED 10
 
-PArray init_clusters(int k) {
+CArray init_clusters(int k) {
     // TODO: This function inits the clusters by random, I don't if this is the intended action
     srand(SEED);
 
-    PArray clusters = malloc(sizeof(Point) * k);
+    CArray clusters = malloc(sizeof(Cluster) * k);
 
     for (int i = 0; i < k; ++i) {
-        clusters[i] = (Point) malloc(sizeof(struct point));
+        clusters[i] = (Cluster) malloc(sizeof(struct cluster));
 
         clusters[i]->x = (float) rand() / RAND_MAX;
         clusters[i]->y = (float) rand() / RAND_MAX;
+        clusters[i]->points_size = 0;
     }
 
     return clusters;
@@ -42,6 +43,10 @@ PArray init_vector(int n) {
     return vector;
 }
 
+inline static float euclidean_distance(Cluster cluster, Point point) {
+    return sqrtf(powf(cluster->x - point->x, 2) + (powf(cluster->y - point->y, 2)));
+}
+
 /**
  * @brief Assigns the closest centroid to each sample
  * 
@@ -50,14 +55,14 @@ PArray init_vector(int n) {
  * @param clusters Array of centroids
  * @param k Number of clusters
 */
-void assign_clusters(PArray vector, int n, PArray clusters, int k) {
+void assign_clusters(PArray vector, int n, CArray clusters, int k) {
     for (int i = 0; i < n; i++) {
         int closest = 0;
         float shortest_dist = __FLT_MAX__; // Set maximum possible distance
-        
+
         for (int o = 0; o < k; o++) {
             // Euclidean distance: dist = sqrt( (x1-x2)^2 + (y1-y2)^2 )
-            float dist = sqrtf(powf( vector[i]->x-clusters[o]->x, 2) + (powf( vector[i]->y-clusters[o]->y, 2)));
+            float dist = euclidean_distance(clusters[o], vector[i]);
             if (dist < shortest_dist) {
                 shortest_dist = dist;
                 closest = o;
@@ -65,31 +70,31 @@ void assign_clusters(PArray vector, int n, PArray clusters, int k) {
         }
 
         vector[i]->cluster = closest;
+        clusters[closest]->points_size++;
     }
-}
-
-inline void static compute_centroid(Point cluster, PArray clusterPoints, int clusterPointsSize) {
-    float sumX = 0;
-    float sumY = 0;
-
-    for (int i = 0; i < clusterPointsSize; ++i) {
-        Point point = clusterPoints[i];
-
-        sumX += point->x;
-        sumY += point->y;
-    }
-
-    cluster->x = sumX / clusterPointsSize;
-    cluster->y = sumY / clusterPointsSize;
 }
 
 void compute_centroids(
-        PArray clusters,
-        int numberOfClusters,
-        PArray *clustersPoints,
-        int *clustersPointsSizes
+        CArray clusters,
+        int k,
+        PArray points,
+        int n
 ) {
-    for (int i = 0; i < numberOfClusters; ++i) {
-        compute_centroid(clusters[i], clustersPoints[i], clustersPointsSizes[i]);
+    float *sum_clusters_points = (float *) calloc(k * 2, sizeof(float));
+
+    for (int i = 0; i < n; ++i) {
+        Point point = points[i];
+
+        sum_clusters_points[point->cluster * 2] += point->x;
+        sum_clusters_points[point->cluster * 2 + 1] += point->y;
     }
+
+    for (int i = 0; i < k; ++i) {
+        Cluster cluster = clusters[i];
+
+        cluster->x = sum_clusters_points[i * 2] / cluster->points_size;
+        cluster->y = sum_clusters_points[i * 2 + 1] / cluster->points_size;
+    }
+
+    free(sum_clusters_points);
 }

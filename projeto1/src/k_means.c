@@ -9,10 +9,9 @@
  [ ] 1. [Criar as amostras e] iniciar os “clusters”
      [ ] a. [Iniciar um vetor com valores aleatórios (N amostras no espaço (x,y) )]
      [ ] b. Iniciar os K clusters com as coordenadas das primeiras K amostras
-     [ ] c. Atribuir cada amostra ao cluster mais próximo usando a distância euclidiana
 
- [ ] 2. Calcular o centroide de cada “cluster” (também conhecido como centro geométrico)
- [ ] 3. Atribuir cada amostra ao “cluster” mais próximo usando a distância euclidiana
+ [ ] 2. Atribuir cada amostra ao cluster mais próximo usando a distância euclidiana
+ [ ] 3. Calcular o centroide de cada “cluster” (também conhecido como centro geométrico)
  [ ] 4. Repetir os passos 2 e 3 até não existirem pontos que mudem de “cluster”
  */
 
@@ -21,17 +20,17 @@ int main() {
     printf("Hello from main function!\n");
 
     PArray vector = init_vector(N);
-    PArray clusters = init_clusters(K);
+    CArray clusters = init_clusters(K);
 
     assign_clusters(vector, N, clusters, K);
 
-    // Define the flux of the program here
+    // TODO: Define the flux of the program here
 
 
     // Program Output
     printf("N = %d, K = %d\n", N, K);
     for (int i = 0; i < K; ++i) {
-        printf("Center: (%f, %f) : Size: Undefined\n", clusters[i]->x, clusters[i]->y);
+        printf("Center: (%f, %f) : Size: %d\n", clusters[i]->x, clusters[i]->y, clusters[i]->points_size);
     }
     printf("Iterations: Undefined\n");
 
