@@ -4,6 +4,12 @@
 
 #define SEED 10
 
+/**
+ * @brief Initializes the clusters with the respective first samples
+ *
+ * @param k Number of clusters to create
+ * @return CArray with all the generated clusters
+ */
 CArray init_clusters(int k) {
     // TODO: This function inits the clusters by random, I don't if this is the intended action
     srand(SEED);
