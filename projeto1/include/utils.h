@@ -28,7 +28,7 @@ typedef Cluster *CArray;
 
 PArray init_vector(int n);
 
-CArray init_clusters(int k);
+CArray init_clusters(PArray points, int k);
 
 void assign_clusters(PArray points, int n, CArray clusters, int k);
 

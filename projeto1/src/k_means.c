@@ -20,7 +20,7 @@ int main() {
     printf("Hello from main function!\n");
 
     PArray vector = init_vector(N);
-    CArray clusters = init_clusters(K);
+    CArray clusters = init_clusters(vector, K);
 
     assign_clusters(vector, N, clusters, K);
 
