@@ -12,9 +12,6 @@
  * @return CArray with all the generated clusters
  */
 CArray init_clusters(PArray samples, int k) {
-    // TODO: This function inits the clusters by random, I don't if this is the intended action
-    srand(SEED);
-
     CArray clusters = malloc(sizeof(Cluster) * k);
 
     for (int i = 0; i < k; ++i) {

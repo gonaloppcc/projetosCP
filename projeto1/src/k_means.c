@@ -43,7 +43,7 @@ int main() {
     for (int i = 0; i < K; ++i) {
         printf("Center: (%f, %f) : Size: %d\n", clusters[i]->x, clusters[i]->y, clusters[i]->samples_size);
     }
-    printf("Iterations: Undefined\n");
+    printf("Iterations: %d\n", iterations);
 
     /* This print is just for debugging, enabling it will flood the console with garbage...
        TODO: Delete this
