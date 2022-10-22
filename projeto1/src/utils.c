@@ -65,6 +65,10 @@ inline static float euclidean_distance(Cluster cluster, Point point) {
 int assign_clusters(PArray samples, int n, CArray clusters, int k) {
     int cluster_changed = 0;
 
+    for (int i = 0; i < k; ++i) { // Reset samples_size field in all clusters
+        clusters[i]->samples_size = 0;
+    }
+
     for (int i = 0; i < n; i++) {
         int closest = samples[i]->cluster; // Set the previous assigned cluster as the closest one
         float shortest_dist = __FLT_MAX__; // Set maximum possible distance
@@ -116,9 +120,6 @@ void compute_centroids(
 
         cluster->x = sum_clusters_samples[i * 2] / cluster->samples_size;
         cluster->y = sum_clusters_samples[i * 2 + 1] / cluster->samples_size;
-
-        // Reset samples_size field
-        cluster->samples_size = 0;
     }
 
     free(sum_clusters_samples);

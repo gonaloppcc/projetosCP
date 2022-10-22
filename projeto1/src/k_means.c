@@ -17,8 +17,6 @@
 
 
 int main() {
-    printf("Hello from main function!\n");
-
     PArray samples = init_samples(N);
     CArray clusters = init_clusters(samples, K);
 
@@ -28,10 +26,16 @@ int main() {
      * Once no sample changes cluster we found the solution and exit the loop
     */
     int changed = 1;
+    int iterations = 0;
 
     while (changed) {
+        iterations++;
+
         changed = assign_clusters(samples, N, clusters, K);
         compute_centroids(samples, N, clusters, K);
+
+        printf("Iteration %d done\n", iterations);
+        fflush(stdout);
     }
 
     // Program Output

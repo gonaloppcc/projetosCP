@@ -4,7 +4,7 @@ SRC = src/
 INCLUDES = include/
 EXEC = k_means
 
-CFLAGS = -g
+CFLAGS = -g -O3
 
 LDFLAGS = -lm
 
