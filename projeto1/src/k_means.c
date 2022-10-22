@@ -22,10 +22,17 @@ int main() {
     PArray samples = init_samples(N);
     CArray clusters = init_clusters(samples, K);
 
-    assign_clusters(samples, N, clusters, K);
+    /*
+     * Main loop of the program
+     * We assign a cluster to each sample and then calculate the new centroid of the cluster
+     * Once no sample changes cluster we found the solution and exit the loop
+    */
+    int changed = 1;
 
-    // TODO: Define the flux of the program here
-
+    while (changed) {
+        changed = assign_clusters(samples, N, clusters, K);
+        compute_centroids(samples, N, clusters, K);
+    }
 
     // Program Output
     printf("N = %d, K = %d\n", N, K);
