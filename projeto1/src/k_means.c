@@ -34,8 +34,8 @@ int main() {
         changed = assign_clusters(samples, N, clusters, K);
         compute_centroids(samples, N, clusters, K);
 
-        printf("Iteration %d done\n", iterations);
-        fflush(stdout);
+        // printf("Iteration %d done\n", iterations);
+        //fflush(stdout);
     }
 
     // Program Output
