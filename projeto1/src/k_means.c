@@ -29,13 +29,13 @@ int main() {
     int iterations = 0;
 
     while (changed) {
-        iterations++;
-
         changed = assign_clusters(samples, N, clusters, K);
         compute_centroids(samples, N, clusters, K);
 
         printf("Iteration %d done\n", iterations);
         fflush(stdout);
+
+        iterations += changed; // If the algorithm has not converged we increment, otherwise iterations stays the same
     }
 
     // Program Output
