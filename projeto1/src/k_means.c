@@ -17,22 +17,33 @@
 
 
 int main() {
-    printf("Hello from main function!\n");
-
     PArray samples = init_samples(N);
     CArray clusters = init_clusters(samples, K);
 
-    assign_clusters(samples, N, clusters, K);
+    /*
+     * Main loop of the program
+     * We assign a cluster to each sample and then calculate the new centroid of the cluster
+     * Once no sample changes cluster we found the solution and exit the loop
+    */
+    int changed = 1;
+    int iterations = 0;
 
-    // TODO: Define the flux of the program here
+    while (changed) {
+        changed = assign_clusters(samples, N, clusters, K);
+        compute_centroids(samples, N, clusters, K);
 
+        printf("Iteration %d done\n", iterations);
+        fflush(stdout);
+
+        iterations += changed; // If the algorithm has not converged we increment, otherwise iterations stays the same
+    }
 
     // Program Output
     printf("N = %d, K = %d\n", N, K);
     for (int i = 0; i < K; ++i) {
         printf("Center: (%f, %f) : Size: %d\n", clusters[i]->x, clusters[i]->y, clusters[i]->samples_size);
     }
-    printf("Iterations: Undefined\n");
+    printf("Iterations: %d\n", iterations);
 
     /* This print is just for debugging, enabling it will flood the console with garbage...
        TODO: Delete this

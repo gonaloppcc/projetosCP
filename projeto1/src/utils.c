@@ -12,9 +12,6 @@
  * @return CArray with all the generated clusters
  */
 CArray init_clusters(PArray samples, int k) {
-    // TODO: This function inits the clusters by random, I don't if this is the intended action
-    srand(SEED);
-
     CArray clusters = malloc(sizeof(Cluster) * k);
 
     for (int i = 0; i < k; ++i) {
@@ -62,9 +59,15 @@ inline static float euclidean_distance(Cluster cluster, Point point) {
  * @param clusters Array of centroids
  * @param k Number of clusters
 */
-void assign_clusters(PArray samples, int n, CArray clusters, int k) {
+int assign_clusters(PArray samples, int n, CArray clusters, int k) {
+    int cluster_changed = 0;
+
+    for (int i = 0; i < k; ++i) { // Reset samples_size field in all clusters
+        clusters[i]->samples_size = 0;
+    }
+
     for (int i = 0; i < n; i++) {
-        int closest = 0;
+        int closest = samples[i]->cluster; // Set the previous assigned cluster as the closest one
         float shortest_dist = __FLT_MAX__; // Set maximum possible distance
 
         for (int o = 0; o < k; o++) {
@@ -76,9 +79,14 @@ void assign_clusters(PArray samples, int n, CArray clusters, int k) {
             }
         }
 
-        samples[i]->cluster = closest;
+        if (samples[i]->cluster != closest) {
+            samples[i]->cluster = closest;
+            cluster_changed = 1;
+        }
         clusters[closest]->samples_size++;
     }
+
+    return cluster_changed;
 }
 
 /**
@@ -109,9 +117,6 @@ void compute_centroids(
 
         cluster->x = sum_clusters_samples[i * 2] / cluster->samples_size;
         cluster->y = sum_clusters_samples[i * 2 + 1] / cluster->samples_size;
-
-        // Reset samples_size field
-        cluster->samples_size = 0;
     }
 
     free(sum_clusters_samples);

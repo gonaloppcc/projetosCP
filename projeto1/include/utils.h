@@ -30,7 +30,7 @@ PArray init_samples(int n);
 
 CArray init_clusters(PArray samples, int k);
 
-void assign_clusters(PArray samples, int n, CArray clusters, int k);
+int assign_clusters(PArray samples, int n, CArray clusters, int k);
 
 void compute_centroids(PArray samples, int n, CArray clusters, int k);
 
