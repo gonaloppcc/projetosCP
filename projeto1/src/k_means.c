@@ -26,7 +26,7 @@ int main() {
     // Program Output
     printf("N = %d, K = %d\n", N, K);
     for (int i = 0; i < K; ++i) {
-        printf("Center: (%f, %f) : Size: %d\n", clusters[i]->x, clusters[i]->y, clusters[i]->samples_size);
+        printf("Center: (%f, %f) : Size: %d\n", clusters[i].x, clusters[i].y, clusters[i].samples_size);
     }
     printf("Iterations: %d\n", iterations);
 
