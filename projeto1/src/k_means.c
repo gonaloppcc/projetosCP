@@ -4,18 +4,6 @@
 #define N 10000000 // Number of samples
 #define K 4 // Number of clusters
 
-/*
- // TODO: APAGAR ISTO DEPOIS!
- [ ] 1. [Criar as amostras e] iniciar os “clusters”
-     [ ] a. [Iniciar um vetor com valores aleatórios (N amostras no espaço (x,y) )]
-     [ ] b. Iniciar os K clusters com as coordenadas das primeiras K amostras
-
- [ ] 2. Atribuir cada amostra ao cluster mais próximo usando a distância euclidiana
- [ ] 3. Calcular o centroide de cada “cluster” (também conhecido como centro geométrico)
- [ ] 4. Repetir os passos 2 e 3 até não existirem pontos que mudem de “cluster”
- */
-
-
 int main() {
     PArray samples = init_samples(N);
     CArray clusters = init_clusters(samples, K);
@@ -32,9 +20,6 @@ int main() {
         changed = assign_clusters(samples, N, clusters, K);
         compute_centroids(samples, N, clusters, K);
 
-        printf("Iteration %d done\n", iterations);
-        fflush(stdout);
-
         iterations += changed; // If the algorithm has not converged we increment, otherwise iterations stays the same
     }
 
@@ -45,14 +30,5 @@ int main() {
     }
     printf("Iterations: %d\n", iterations);
 
-    /* This print is just for debugging, enabling it will flood the console with garbage...
-       TODO: Delete this
-    
-    printf("Printing samples...\n");
-    for (int i = 0; i < N; ++i) {
-        printf("(%f,%f) : Cluster: %d\n", samples[i]->x, samples[i]->y, samples[i]->cluster);
-    }
-    
-    */
     return 0;
 }
