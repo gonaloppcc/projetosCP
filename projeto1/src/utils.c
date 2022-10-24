@@ -109,10 +109,8 @@ void compute_centroids(
     }
 
     for (int i = 0; i < k; ++i) { // Complexity: K
-        Cluster cluster = clusters[i];
-
-        cluster.x = sum_clusters_samples[i * 2] / cluster.samples_size;
-        cluster.y = sum_clusters_samples[i * 2 + 1] / cluster.samples_size;
+        clusters[i].x = sum_clusters_samples[i * 2] / clusters[i].samples_size;
+        clusters[i].y = sum_clusters_samples[i * 2 + 1] / clusters[i].samples_size;
     }
 
     free(sum_clusters_samples);
