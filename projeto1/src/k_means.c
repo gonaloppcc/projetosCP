@@ -6,7 +6,9 @@
 
 int main() {
     PArray samples = init_samples(N);
-    CArray clusters = init_clusters(samples, K);
+    Cluster clusters[K]  __attribute__ ((aligned (32)));
+
+    init_clusters(clusters, samples, K);
 
     /*
      * Main loop of the program

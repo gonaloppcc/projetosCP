@@ -28,7 +28,7 @@ typedef Cluster *CArray;
 
 PArray init_samples(int n);
 
-CArray init_clusters(PArray samples, int k);
+CArray init_clusters(CArray clusters, PArray samples, int k);
 
 int assign_clusters(PArray samples, int n, CArray clusters, int k);
 
