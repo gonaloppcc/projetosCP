@@ -14,13 +14,16 @@ setup:
 	mkdir $(BIN)
 
 k_means: $(SRC)k_means.c $(BIN)utils.o
-	$(CC) $(CFLAGS) $(SRC)k_means.c $(BIN)utils.o -o $(BIN)$(EXEC) $(LDFLAGS)
+	$(CC) $(CFLAGS) $(SRC)k_means.c $(BIN)utils.o -o $(BIN)$(EXEC) $(ldflags)
 
 $(BIN)utils.o: $(SRC)utils.c $(INCLUDES)utils.h
 	$(CC) $(CFLAGS) -c $(SRC)utils.c -o $(BIN)utils.o $(LDFLAGS)
 
 clean:
 	rm -r bin/*
+
+assembler: $(BIN)utils.o
+	$(CC) $(CFLAGS) -S $(SRC)k_means.c $(ldflags)
 
 run: k_means
 	./$(BIN)$(EXEC)
