@@ -33,9 +33,11 @@ PArray init_samples(int n) {
 
     PArray samples = malloc(sizeof(Point) * n);
 
+    float rand_max_inv = (float) 1 / RAND_MAX;
+
     for (int i = 0; i < n; i++) { // Complexity: N
-        samples[i].x = (float) rand() / RAND_MAX;
-        samples[i].y = (float) rand() / RAND_MAX;
+        samples[i].x = (float) rand() * rand_max_inv;
+        samples[i].y = (float) rand() * rand_max_inv;
         samples[i].cluster = -1;
     }
 
