@@ -43,7 +43,7 @@ PArray init_samples(int n) {
 }
 
 inline static float euclidean_distance(Cluster cluster, Point point) {
-    return sqrtf(powf(cluster.x - point.x, 2) + (powf(cluster.y - point.y, 2)));
+    return powf(cluster.x - point.x, 2) + (powf(cluster.y - point.y, 2));
 }
 
 /**
