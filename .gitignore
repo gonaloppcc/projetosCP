@@ -1,1 +1,3 @@
 .idea/
+perf.data*
+*.s
