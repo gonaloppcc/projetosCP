@@ -22,5 +22,8 @@ $(BIN)utils.o: $(SRC)utils.c $(INCLUDES)utils.h
 clean:
 	rm -r bin/*
 
+assembler: $(BIN)utils.o
+	$(CC) $(CFLAGS) -S $(SRC)k_means.c $(LDFLAGS)
+
 run: k_means
 	./$(BIN)$(EXEC)
