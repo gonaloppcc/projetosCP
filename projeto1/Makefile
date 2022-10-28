@@ -4,7 +4,7 @@ SRC = src/
 INCLUDES = include/
 EXEC = k_means
 
-CFLAGS = -g -O3
+CFLAGS = -O3 -funroll-loops -finline-functions
 
 LDFLAGS = -lm
 
