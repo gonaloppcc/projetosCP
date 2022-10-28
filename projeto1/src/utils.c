@@ -11,8 +11,7 @@
  * @param k Number of clusters to create
  * @return CArray with all the generated clusters
  */
-CArray init_clusters(PArray samples, int k) {
-    CArray clusters = malloc(sizeof(Cluster) * k);
+CArray init_clusters(CArray clusters, PArray samples, int k) {
 
     for (int i = 0; i < k; ++i) { // Complexity: K
         clusters[i].x = samples[i].x;
