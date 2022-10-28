@@ -1,0 +1,11 @@
+ Performance counter stats for '/home/pg50393/projetos/projeto1/bin/k_means' (3 runs):
+
+    33,834,917,385      instructions              #    2.48  insn per cycle                                              ( +-  0.00% )
+    13,668,850,634      cycles                                                        ( +-  0.09% )
+        26,708,192      cache-references                                              ( +-  0.75% )
+        11,534,251      cache-misses              #   43.186 % of all cache refs      ( +-  1.28% )
+    33,834,917,385      inst_retired.any          #      0.4 CPI                      ( +-  0.00% )
+    13,668,850,620      cycles                                                        ( +-  0.09% )
+
+            4.4963 +- 0.0591 seconds time elapsed  ( +-  1.31% )
+
