@@ -16,11 +16,11 @@ struct cluster {
     int samples_size; // Number of samples associated with this cluster
 };
 
-typedef struct point *Point;
+typedef struct point Point;
 
 typedef Point *PArray;
 
-typedef struct cluster *Cluster;
+typedef struct cluster Cluster;
 
 typedef Cluster *CArray;
 

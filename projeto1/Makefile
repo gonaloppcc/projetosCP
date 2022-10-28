@@ -4,7 +4,7 @@ SRC = src/
 INCLUDES = include/
 EXEC = k_means
 
-CFLAGS = -g -O3
+CFLAGS = -O3 -funroll-loops -finline-functions
 
 LDFLAGS = -lm
 
@@ -14,10 +14,10 @@ setup:
 	mkdir $(BIN)
 
 k_means: $(SRC)k_means.c $(BIN)utils.o
-	$(CC) $(CFLAGS) $(SRC)k_means.c $(BIN)utils.o -o $(BIN)$(EXEC) $(LDFLAGS)
+	$(CC) $(SRC)k_means.c $(BIN)utils.o -o $(BIN)$(EXEC) $(LDFLAGS) $(CFLAGS)
 
 $(BIN)utils.o: $(SRC)utils.c $(INCLUDES)utils.h
-	$(CC) $(CFLAGS) -c $(SRC)utils.c -o $(BIN)utils.o $(LDFLAGS)
+	$(CC) -c $(SRC)utils.c -o $(BIN)utils.o $(LDFLAGS) $(CFLAGS)
 
 clean:
 	rm -r bin/*
