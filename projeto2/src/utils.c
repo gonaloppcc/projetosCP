@@ -56,11 +56,15 @@ inline static float euclidean_distance(Cluster cluster, Point point) {
 */
 int assign_clusters(PArray samples, int n, CArray clusters, int k) {
     int cluster_changed = 0;
+    int sample_sizes[k];
+
 
     for (int i = 0; i < k; ++i) { // Reset samples_size field in all clusters
-        clusters[i].samples_size = 0;
+        //clusters[i].samples_size = 0;
+        sample_sizes[i] = 0;
     } // Complexity: K
 
+    #pragma omp parallel for reduction(+:sample_sizes)
     for (int i = 0; i < n; i++) { // Complexity: N
         int closest = samples[i].cluster; // Set the previous assigned cluster as the closest one
         float shortest_dist = __FLT_MAX__; // Set maximum possible distance
@@ -78,7 +82,13 @@ int assign_clusters(PArray samples, int n, CArray clusters, int k) {
             samples[i].cluster = closest;
             cluster_changed = 1;
         }
-        clusters[closest].samples_size++;
+        sample_sizes[closest]++;
+        //#pragma omp atomic
+        //clusters[closest].samples_size++;
+    }
+
+    for(int i = 0; i < k; i++) {
+        clusters[i].samples_size = sample_sizes[i];
     }
 
     return cluster_changed;
