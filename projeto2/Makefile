@@ -4,7 +4,10 @@ SRC = src/
 INCLUDES = include/
 EXEC = k_means
 
-CFLAGS = -O3 -funroll-loops -finline-functions
+STAT_TIMES = 3
+REPORT_FILE_NAME = perf_report.txt
+
+CFLAGS = -O3 -fopenmp -funroll-loops -finline-functions -g
 
 LDFLAGS = -lm
 
@@ -27,3 +30,10 @@ assembler: $(BIN)utils.o
 
 run: k_means
 	./$(BIN)$(EXEC)
+
+stat: k_means
+	perf stat -r $(STAT_TIMES) ./$(BIN)$(EXEC)
+
+report: k_means
+	perf record ./$(BIN)$(EXEC)
+	perf report > $(REPORT_FILE_NAME)
