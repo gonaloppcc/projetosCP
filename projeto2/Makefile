@@ -31,9 +31,9 @@ assembler: $(BIN)utils.o
 run: k_means
 	./$(BIN)$(EXEC)
 
-stat:
+stat: k_means
 	perf stat -r $(STAT_TIMES) ./$(BIN)$(EXEC)
 
-report:
+report: k_means
 	perf record ./$(BIN)$(EXEC)
 	perf report > $(REPORT_FILE_NAME)
