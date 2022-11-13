@@ -1,0 +1,9 @@
+ Performance counter stats for 'make run_seq CP_CLUSTERS=4' (5 runs):
+
+    17,298,085,393      instructions              #    2.30  insn per cycle                                              ( +-  0.00% )
+     7,504,718,022      cycles                                                        ( +-  0.05% )
+        13,922,445      cache-references                                              ( +-  0.17% )
+         6,449,396      cache-misses              #   46.324 % of all cache refs      ( +-  0.36% )
+
+            2.3149 +- 0.0376 seconds time elapsed  ( +-  1.62% )
+

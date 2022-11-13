@@ -1,0 +1,9 @@
+ Performance counter stats for 'make run_par CP_CLUSTERS=4' (5 runs):
+
+    17,297,638,940      instructions              #    2.31  insn per cycle                                              ( +-  0.00% )
+     7,502,902,661      cycles                                                        ( +-  0.06% )
+        13,907,791      cache-references                                              ( +-  0.37% )
+         6,463,878      cache-misses              #   46.477 % of all cache refs      ( +-  0.29% )
+
+            2.3226 +- 0.0457 seconds time elapsed  ( +-  1.97% )
+

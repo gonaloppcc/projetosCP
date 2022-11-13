@@ -56,16 +56,19 @@ inline static float euclidean_distance(Cluster cluster, Point point) {
 */
 int assign_clusters(PArray samples, int n, CArray clusters, int k) {
     int cluster_changed = 0;
+    int sample_sizes[k];
+
 
     for (int i = 0; i < k; ++i) { // Reset samples_size field in all clusters
-        clusters[i].samples_size = 0;
+        sample_sizes[i] = 0;
     } // Complexity: K
 
+#pragma omp parallel for reduction(+:sample_sizes)
     for (int i = 0; i < n; i++) { // Complexity: N
         int closest = samples[i].cluster; // Set the previous assigned cluster as the closest one
         float shortest_dist = __FLT_MAX__; // Set maximum possible distance
 
-        for (int o = 0; o < k; o++) { // Complexity: K ->
+        for (int o = 0; o < k; o++) { // Complexity: K
             // Euclidean distance: dist = sqrt( (x1-x2)^2 + (y1-y2)^2 )
             float dist = euclidean_distance(clusters[o], samples[i]);
             if (dist < shortest_dist) {
@@ -78,7 +81,11 @@ int assign_clusters(PArray samples, int n, CArray clusters, int k) {
             samples[i].cluster = closest;
             cluster_changed = 1;
         }
-        clusters[closest].samples_size++;
+        sample_sizes[closest]++;
+    }
+
+    for (int i = 0; i < k; i++) {
+        clusters[i].samples_size = sample_sizes[i];
     }
 
     return cluster_changed;
@@ -98,19 +105,24 @@ void compute_centroids(
         CArray clusters,
         int k
 ) {
-    float *sum_clusters_samples = (float *) calloc(k * 2, sizeof(float));
+    float sum_clusters_samples_y[k];
+    float sum_clusters_samples_x[k];
 
+    for (int i = 0; i < k; ++i) {
+        sum_clusters_samples_x[i] = 0;
+        sum_clusters_samples_y[i] = 0;
+    }
+
+#pragma omp parallel for reduction(+:sum_clusters_samples_x) reduction(+:sum_clusters_samples_y)
     for (int i = 0; i < n; ++i) { // Complexity: N
         Point point = samples[i];
 
-        sum_clusters_samples[point.cluster * 2] += point.x;
-        sum_clusters_samples[point.cluster * 2 + 1] += point.y;
+        sum_clusters_samples_x[point.cluster] += point.x;
+        sum_clusters_samples_y[point.cluster] += point.y;
     }
 
     for (int i = 0; i < k; ++i) { // Complexity: K
-        clusters[i].x = sum_clusters_samples[i * 2] / clusters[i].samples_size;
-        clusters[i].y = sum_clusters_samples[i * 2 + 1] / clusters[i].samples_size;
+        clusters[i].x = sum_clusters_samples_x[i] / clusters[i].samples_size;
+        clusters[i].y = sum_clusters_samples_y[i] / clusters[i].samples_size;
     }
-
-    free(sum_clusters_samples);
 }
