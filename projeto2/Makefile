@@ -7,7 +7,7 @@ EXEC = k_means
 STAT_TIMES = 3
 REPORT_FILE_NAME = perf_report.txt
 
-CFLAGS = -O3 -fopenmp -funroll-loops -finline-functions -g
+CFLAGS = -O3 -fopenmp -funroll-loops -finline-functions -std=c99
 
 LDFLAGS = -lm
 
@@ -37,3 +37,9 @@ stat: k_means
 report: k_means
 	perf record ./$(BIN)$(EXEC)
 	perf report > $(REPORT_FILE_NAME)
+
+run_seq: k_means
+	./$(BIN)$(EXEC) 10000000 $(CP_CLUSTERS) 1
+
+run_par: k_means
+	./$(BIN)$(EXEC) 10000000 $(CP_CLUSTERS) $(THREADS)
