@@ -38,8 +38,8 @@ report: k_means
 	perf record ./$(BIN)$(EXEC)
 	perf report > $(REPORT_FILE_NAME)
 
-run_seq: k_means
+runseq: k_means
 	./$(BIN)$(EXEC) 10000000 $(CP_CLUSTERS) 1
 
-run_par: k_means
+runpar: k_means
 	./$(BIN)$(EXEC) 10000000 $(CP_CLUSTERS) $(THREADS)
