@@ -29,8 +29,6 @@ SArray init_samples(int n);
 
 CArray init_clusters(SArray samples, int k);
 
-int assign_clusters(SArray samples, int n, CArray clusters, int k);
-
-void compute_centroids(SArray samples, int n, CArray clusters, int k);
+int compute_samples(SArray samples, int n, CArray clusters, int k);
 
 #endif

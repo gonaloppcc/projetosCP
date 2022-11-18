@@ -29,8 +29,7 @@ int main(int argc, char *argv[]) {
     int iterations = 0;
 
     while (iterations < MAX_ITERATIONS && changed) {
-        changed = assign_clusters(samples, sample_num, clusters, cluster_num);
-        //compute_centroids(samples, sample_num, clusters, cluster_num);
+        changed = compute_samples(samples, sample_num, clusters, cluster_num);
 
         iterations += changed; // If the algorithm has not converged we increment, otherwise iterations stays the same
     }

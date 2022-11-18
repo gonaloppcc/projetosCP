@@ -7,7 +7,7 @@ EXEC = k_means
 STAT_TIMES = 3
 REPORT_FILE_NAME = perf_report.txt
 
-CFLAGS = -O3 -fopenmp -funroll-loops -finline-functions -std=c99 -g
+CFLAGS = -O3 -fopenmp -funroll-loops -finline-functions -std=c99
 
 LDFLAGS = -lm
 

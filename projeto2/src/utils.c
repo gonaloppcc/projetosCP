@@ -56,19 +56,18 @@ inline static float distance(float cluster_x, float cluster_y, float sample_x, f
 }
 
 /**
- * @brief Assigns the closest centroid to each sample
+ * @brief Assigns the closest centroid to each sample and computes the new centroids
  *
  * @param samples Array of samples
  * @param n Number of samples
  * @param clusters Array of centroids
  * @param k Number of clusters
 */
-int assign_clusters(SArray samples, int n, CArray clusters, int k) {
+int compute_samples(SArray samples, int n, CArray clusters, int k) {
     int cluster_changed = 0;
     int sample_sizes[k];
     float clusters_x[k];
     float clusters_y[k];
-
 
     for (int i = 0; i < k; ++i) { // Reset samples_size field in all clusters
         sample_sizes[i] = 0;
@@ -95,36 +94,17 @@ int assign_clusters(SArray samples, int n, CArray clusters, int k) {
             cluster_changed = 1;
         }
         sample_sizes[closest]++;
-        clusters_x[closest] += samples[i].x;
-        clusters_y[closest] += samples[i].y;
+        clusters_x[closest] += samples->x[i];
+        clusters_y[closest] += samples->y[i];
     }
 
     for (int i = 0; i < k; i++) {
         clusters->samples_size[i] = sample_sizes[i];
-        clusters[i].samples_size = sample_sizes[i];
-        clusters[i].x = clusters_x[i] / sample_sizes[i];
-        clusters[i].y = clusters_y[i] / sample_sizes[i];
+
+        // Computing the centroids, assigning a new position for each cluster
+        clusters->x[i] = clusters_x[i] / sample_sizes[i];
+        clusters->y[i] = clusters_y[i] / sample_sizes[i];
     }
 
     return cluster_changed;
-}
-
-/**
- * @brief Computes the centroids, assigning a new position for each cluster
- *
- * @param samples Array of samples
- * @param n Number of samples
- * @param clusters Array of centroids
- * @param k Number of clusters
- */
-void compute_centroids(
-        SArray samples,
-        int n,
-        CArray clusters,
-        int k
-) {
-    for (int i = 0; i < k; ++i) { // Complexity: K
-        clusters->x[i] /= clusters->samples_size[i];
-        clusters->y[i] /= clusters->samples_size[i];
-    }
 }
