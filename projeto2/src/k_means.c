@@ -17,10 +17,8 @@ int main(int argc, char *argv[]) {
 
     omp_set_num_threads(thread_num);
 
-    PArray samples = init_samples(sample_num);
-    Cluster clusters[cluster_num]  __attribute__ ((aligned (32)));
-
-    init_clusters(clusters, samples, cluster_num);
+    SArray samples = init_samples(sample_num);
+    CArray clusters = init_clusters(samples, cluster_num);
 
     /*
      * Main loop of the program
@@ -40,7 +38,7 @@ int main(int argc, char *argv[]) {
     // Program Output
     printf("N = %d, K = %d\n", sample_num, cluster_num);
     for (int i = 0; i < cluster_num; ++i) {
-        printf("Center: (%.3f, %.3f) : Size: %d\n", clusters[i].x, clusters[i].y, clusters[i].samples_size);
+        printf("Center: (%.3f, %.3f) : Size: %d\n", clusters->x[i], clusters->y[i], clusters->samples_size[i]);
     }
     printf("Iterations: %d\n", iterations);
 

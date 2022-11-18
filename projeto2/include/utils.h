@@ -3,35 +3,34 @@
 
 /* ------------------------------------------------ Type Definitions ------------------------------------------------ */
 
-struct point {
-    float x;
-    float y;
-    int cluster;
+struct samples {
+    float *x;
+    float *y;
+    int *cluster;
 };
 
-struct cluster {
-    float x;
-    float y;
-
-    int samples_size; // Number of samples associated with this cluster
+struct clusters {
+    float *x;
+    float *y;
+    int *samples_size; // Number of samples associated with this cluster
 };
 
-typedef struct point Point;
+typedef struct samples Samples;
 
-typedef Point *PArray;
+typedef Samples *SArray;
 
-typedef struct cluster Cluster;
+typedef struct clusters Clusters;
 
-typedef Cluster *CArray;
+typedef Clusters *CArray;
 
 /* --------------------------------------------- Functions declarations --------------------------------------------- */
 
-PArray init_samples(int n);
+SArray init_samples(int n);
 
-CArray init_clusters(CArray clusters, PArray samples, int k);
+CArray init_clusters(SArray samples, int k);
 
-int assign_clusters(PArray samples, int n, CArray clusters, int k);
+int assign_clusters(SArray samples, int n, CArray clusters, int k);
 
-void compute_centroids(PArray samples, int n, CArray clusters, int k);
+void compute_centroids(SArray samples, int n, CArray clusters, int k);
 
 #endif
