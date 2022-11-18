@@ -75,7 +75,7 @@ int compute_samples(SArray samples, int n, CArray clusters, int k) {
         clusters_y[i] = 0;
     } // Complexity: K
 
-#pragma omp parallel for reduction(+:sample_sizes, clusters_x, clusters_y) schedule(guided)
+#pragma omp parallel for reduction(+:sample_sizes, clusters_x, clusters_y) schedule(static)
     for (int i = 0; i < n; i++) { // Complexity: N
         int closest = samples->cluster[i]; // Set the previous assigned cluster as the closest one
         float shortest_dist = __FLT_MAX__; // Set maximum possible distance
