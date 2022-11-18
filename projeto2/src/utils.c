@@ -66,13 +66,17 @@ inline static float distance(float cluster_x, float cluster_y, float sample_x, f
 int assign_clusters(SArray samples, int n, CArray clusters, int k) {
     int cluster_changed = 0;
     int sample_sizes[k];
+    float clusters_x[k];
+    float clusters_y[k];
 
 
     for (int i = 0; i < k; ++i) { // Reset samples_size field in all clusters
         sample_sizes[i] = 0;
+        clusters_x[i] = 0;
+        clusters_y[i] = 0;
     } // Complexity: K
 
-#pragma omp parallel for reduction(+:sample_sizes)
+#pragma omp parallel for reduction(+:sample_sizes, clusters_x, clusters_y)
     for (int i = 0; i < n; i++) { // Complexity: N
         int closest = samples->cluster[i]; // Set the previous assigned cluster as the closest one
         float shortest_dist = __FLT_MAX__; // Set maximum possible distance
@@ -91,10 +95,15 @@ int assign_clusters(SArray samples, int n, CArray clusters, int k) {
             cluster_changed = 1;
         }
         sample_sizes[closest]++;
+        clusters_x[closest] += samples[i].x;
+        clusters_y[closest] += samples[i].y;
     }
 
     for (int i = 0; i < k; i++) {
         clusters->samples_size[i] = sample_sizes[i];
+        clusters[i].samples_size = sample_sizes[i];
+        clusters[i].x = clusters_x[i] / sample_sizes[i];
+        clusters[i].y = clusters_y[i] / sample_sizes[i];
     }
 
     return cluster_changed;
@@ -114,22 +123,8 @@ void compute_centroids(
         CArray clusters,
         int k
 ) {
-    float sum_clusters_samples_y[k];
-    float sum_clusters_samples_x[k];
-
-    for (int i = 0; i < k; ++i) {
-        sum_clusters_samples_x[i] = 0;
-        sum_clusters_samples_y[i] = 0;
-    }
-
-#pragma omp parallel for reduction(+:sum_clusters_samples_x) reduction(+:sum_clusters_samples_y)
-    for (int i = 0; i < n; ++i) { // Complexity: N
-        sum_clusters_samples_x[samples->cluster[i]] += samples->x[i];
-        sum_clusters_samples_y[samples->cluster[i]] += samples->y[i];
-    }
-
     for (int i = 0; i < k; ++i) { // Complexity: K
-        clusters->x[i] = sum_clusters_samples_x[i] / clusters->samples_size[i];
-        clusters->y[i] = sum_clusters_samples_y[i] / clusters->samples_size[i];
+        clusters->x[i] /= clusters->samples_size[i];
+        clusters->y[i] /= clusters->samples_size[i];
     }
 }
