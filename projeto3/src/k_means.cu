@@ -1,9 +1,8 @@
 #include "../include/utils.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <omp.h>
 
-#define MAX_ITERATIONS 20
+#define MAX_ITERATIONS 500
 
 int main(int argc, char *argv[]) {
     if (argc < 3) {
@@ -13,7 +12,6 @@ int main(int argc, char *argv[]) {
 
     int sample_num = atoi(argv[1]);
     int cluster_num = atoi(argv[2]);
-    //omp_set_num_threads(thread_num);
 
     SArray samples = init_samples(sample_num);
     CArray clusters = init_clusters(samples, cluster_num);
