@@ -4,6 +4,7 @@
 #include <cuda.h>
 
 #define SEED 10
+#define BLOCK_SIZE 1024
 
 
 __device__
@@ -19,20 +20,32 @@ void calc_closest(
     float *clusters_x,
     float *clusters_y,
     int k,
-    int *closest_array
+    int *closest_array,
+    int *changed
 ) {
-    int id = blockIdx.x * blockDim.x + threadIdx.x;
+    int gid = blockIdx.x * blockDim.x + threadIdx.x;
+    __shared__ int sharedArray[BLOCK_SIZE];
+
+    if (gid >= n)
+        return;
 
     int closest = -1;
     float shortest_dist = __FLT_MAX__;
     for (int i = 0; i < k; i++) {
-        float dist = distance(clusters_x[i], clusters_y[i], samples_x[id], samples_y[id]);
+        float dist = distance(clusters_x[i], clusters_y[i], samples_x[gid], samples_y[gid]);
         if (dist < shortest_dist) {
             shortest_dist = dist;
             closest = i;
         }
     }
-    closest_array[id] = closest;
+    sharedArray[threadIdx.x] = closest_array[gid] != closest;
+    closest_array[gid] = closest;
+    __syncthreads();
+    if (threadIdx.x != 0)
+        return;
+
+    for (int i = 0; i < blockDim.x; i++)
+        changed[blockIdx.x] += sharedArray[i];
 }
 
 /**
@@ -82,6 +95,7 @@ SArray init_samples(int n) {
     return samples;
 }
 
+// TODO: Free cudaMallocs
 /**
  * @brief Assigns the closest centroid to each sample and computes the new centroids
  *
@@ -105,6 +119,7 @@ int compute_samples(SArray samples, int n, CArray clusters, int k) {
     float *gpu_samples_x, *gpu_samples_y;
     float *gpu_clusters_x, *gpu_clusters_y;
     int *new_closest;
+    int *changed_gpu, changed_cpu[BLOCK_SIZE];
     int samples_bytes = n * sizeof(float);
     int cluster_bytes = k * sizeof(float);
     int out_bytes = n * sizeof(int);
@@ -114,27 +129,28 @@ int compute_samples(SArray samples, int n, CArray clusters, int k) {
     cudaMalloc((void**) &gpu_clusters_x, cluster_bytes);
     cudaMalloc((void**) &gpu_clusters_y, cluster_bytes);
     cudaMalloc((void**) &new_closest, out_bytes);
+    cudaMalloc((void**) &changed_gpu, BLOCK_SIZE*sizeof(int));
 
     cudaMemcpy(gpu_samples_x, samples->x, samples_bytes, cudaMemcpyHostToDevice);
     cudaMemcpy(gpu_samples_y, samples->y, samples_bytes, cudaMemcpyHostToDevice);
     cudaMemcpy(gpu_clusters_x, clusters->x, cluster_bytes, cudaMemcpyHostToDevice);
     cudaMemcpy(gpu_clusters_y, clusters->y, cluster_bytes, cudaMemcpyHostToDevice);
+    cudaMemcpy(new_closest, samples->cluster, out_bytes, cudaMemcpyHostToDevice);
     
-    int num_blocks = n / 1000;
+    int num_blocks = n / BLOCK_SIZE;
     
-    calc_closest <<< 1000, num_blocks >>> (gpu_samples_x, gpu_samples_y, n, gpu_clusters_x, gpu_clusters_y, k, new_closest);
+    calc_closest <<< num_blocks, BLOCK_SIZE >>> (gpu_samples_x, gpu_samples_y, n, gpu_clusters_x, gpu_clusters_y, k, new_closest, changed_gpu);
 
+    cudaDeviceSynchronize();
     cudaMemcpy(samples->cluster, new_closest, out_bytes, cudaMemcpyDeviceToHost);
+    cudaMemcpy(changed_cpu, changed_gpu, BLOCK_SIZE*sizeof(int), cudaMemcpyDeviceToHost);
+
+    for(int i = 0; i < BLOCK_SIZE; i++) {
+        cluster_changed += changed_cpu[i];        
+    }
 
 //#pragma omp parallel for reduction(+:sample_sizes, clusters_x, clusters_y) schedule(static)
     for (int i = 0; i < n; i++) { // Complexity: N
-/*
-
-        if (samples->cluster[i] != closest) {
-            samples->cluster[i] = closest;
-            cluster_changed = 1;
-        }
-*/       
         int closest = samples->cluster[i];
         sample_sizes[closest]++;
         clusters_x[closest] += samples->x[i];
@@ -149,5 +165,5 @@ int compute_samples(SArray samples, int n, CArray clusters, int k) {
         clusters->y[i] = clusters_y[i] / sample_sizes[i];
     }
 
-    return ++cluster_changed;
+    return cluster_changed > 0;
 }

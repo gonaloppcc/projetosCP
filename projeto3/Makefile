@@ -39,7 +39,7 @@ report: k_means
 	perf report > $(REPORT_FILE_NAME)
 
 runseq: k_means
-	./$(BIN)$(EXEC) 10000000 4 1
+	./$(BIN)$(EXEC) 10000000 4
 
 runpar: k_means
 	./$(BIN)$(EXEC) 10000000 $(CP_CLUSTERS) $(THREADS)
