@@ -1,4 +1,5 @@
 CC = nvcc
+LD = nvcc
 BIN = bin/
 SRC = src/
 INCLUDES = include/
@@ -7,7 +8,7 @@ EXEC = k_means
 STAT_TIMES = 3
 REPORT_FILE_NAME = perf_report.txt
 
-CFLAGS = -O3 #-fopenmp -funroll-loops -finline-functions #-std=c99
+CFLAGS = -O3 -std=c++11 -arch=sm_35 -Wno-deprecated-gpu-targets
 
 LDFLAGS = -lm
 
@@ -16,11 +17,14 @@ LDFLAGS = -lm
 setup:
 	mkdir $(BIN)
 
-k_means: $(SRC)k_means.cu $(BIN)utils.o
-	$(CC) $(SRC)k_means.cu $(BIN)utils.o -o $(BIN)$(EXEC) $(LDFLAGS) $(CFLAGS)
+k_means: $(SRC)k_means.cu $(BIN)utils.o $(BIN)cp-utils.o
+	$(CC) $(SRC)k_means.cu $(BIN)utils.o $(BIN)cp-utils.o -o $(BIN)$(EXEC) $(LDFLAGS) $(CFLAGS)
 
 $(BIN)utils.o: $(SRC)utils.cu $(INCLUDES)utils.h
 	$(CC) -c $(SRC)utils.cu -o $(BIN)utils.o $(LDFLAGS) $(CFLAGS)
+
+$(BIN)cp-utils.o: $(SRC)cp-utils.cu $(INCLUDES)cp-utils.h
+	$(CC) -c $(SRC)cp-utils.cu -o $(BIN)cp-utils.o $(LDFLAGS) $(CFLAGS)
 
 clean:
 	rm -r bin/*

@@ -1,4 +1,5 @@
 #include "../include/utils.h"
+#include "../include/cp-utils.h"
 #include <stdlib.h>
 #include <iostream>
 #include <math.h>
@@ -148,6 +149,8 @@ int compute_samples(SArray samples, int n, CArray clusters, int k) {
 
     int num_blocks = n / BLOCK_SIZE;
 
+    startKernelTime();
+
     cudaMemcpy(gpu_samples_x, samples->x, samples_bytes, cudaMemcpyHostToDevice);
     cudaMemcpy(gpu_samples_y, samples->y, samples_bytes, cudaMemcpyHostToDevice);
     cudaMemcpy(gpu_clusters_x, clusters->x, cluster_bytes, cudaMemcpyHostToDevice);
@@ -161,6 +164,8 @@ int compute_samples(SArray samples, int n, CArray clusters, int k) {
     cudaDeviceSynchronize();
     cudaMemcpy(samples->cluster, closest_cluster, closest_cluster_bytes, cudaMemcpyDeviceToHost);
     cudaMemcpy(changed_cpu, changed_gpu, changed_gpu_bytes, cudaMemcpyDeviceToHost);
+
+    stopKernelTime();
 
     for (int i = 0; i < BLOCK_SIZE; i++) {
         cluster_changed += changed_cpu[i];
