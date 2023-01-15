@@ -29,6 +29,6 @@ SArray init_samples(int n);
 
 CArray init_clusters(SArray samples, int k);
 
-int compute_samples(SArray samples, int n, CArray clusters, int k);
+int compute_samples(SArray samples, int n, CArray clusters, int k, float *millis_memcpy, float *millis_kernel);
 
 #endif

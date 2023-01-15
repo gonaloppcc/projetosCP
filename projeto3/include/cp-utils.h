@@ -2,7 +2,7 @@
 #define CP_UTILS
 
 void checkCUDAError (const char *msg);
-void startKernelTime ();
-void stopKernelTime ();
+void startKernelTime (cudaEvent_t *start, cudaEvent_t *stop);
+float stopKernelTime (cudaEvent_t *start, cudaEvent_t *stop);
 
 #endif

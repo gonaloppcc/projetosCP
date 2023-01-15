@@ -24,12 +24,20 @@ int main(int argc, char *argv[]) {
     int changed = 1;
     int iterations = 0;
 
+    float millis_memcpy = 0;
+    float millis_kernel = 0;
+
     while (iterations < MAX_ITERATIONS && changed) {
-        changed = compute_samples(samples, sample_num, clusters, cluster_num);
+        changed = compute_samples(samples, sample_num, clusters, cluster_num, &millis_memcpy, &millis_kernel);
 
         iterations += changed; // If the algorithm has not converged we increment, otherwise iterations stays the same
     }
 
+    printf("Total time spent on memcpy: %f\n", millis_memcpy);
+    printf("Average time spent on memcpy: %f\n", millis_memcpy / iterations);
+    printf("\n");
+    printf("Total time spent on kernel execution: %f\n", millis_kernel);
+    printf("Average time spent on kernel execution: %f\n", millis_kernel / iterations);
     printf("N = %d, K = %d\n", sample_num, cluster_num);
     for (int i = 0; i < cluster_num; ++i) {
         printf("Center: (%.3f, %.3f) : Size: %d\n", clusters->x[i], clusters->y[i], clusters->samples_size[i]);

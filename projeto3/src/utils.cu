@@ -133,11 +133,21 @@ SArray init_samples(int n) {
  * @param clusters Array of centroids
  * @param k Number of clusters
 */
-int compute_samples(SArray samples, int n, CArray clusters, int k) {
+int compute_samples(
+    SArray samples,
+    int n,
+    CArray clusters,
+    int k,
+    float *millis_memcpy,
+    float *millis_kernel
+) {
     int cluster_changed = 0;
     int sample_sizes[k];
     float clusters_x[k];
     float clusters_y[k];
+    int changed_cpu[BLOCK_SIZE];
+    int num_blocks = n / BLOCK_SIZE;
+    cudaEvent_t memcpyhd_start, memcpyhd_stop, memcpydh_start, memcpydh_stop, kernel_start, kernel_stop;
 
     for (int i = 0; i < k; ++i) { // Reset samples_size field in all clusters
         sample_sizes[i] = 0;
@@ -145,27 +155,24 @@ int compute_samples(SArray samples, int n, CArray clusters, int k) {
         clusters_y[i] = 0;
     } // Complexity: K
 
-    int changed_cpu[BLOCK_SIZE];
-
-    int num_blocks = n / BLOCK_SIZE;
-
-    startKernelTime();
-
+    startKernelTime(&memcpyhd_start, &memcpyhd_stop);
     cudaMemcpy(gpu_samples_x, samples->x, samples_bytes, cudaMemcpyHostToDevice);
     cudaMemcpy(gpu_samples_y, samples->y, samples_bytes, cudaMemcpyHostToDevice);
     cudaMemcpy(gpu_clusters_x, clusters->x, cluster_bytes, cudaMemcpyHostToDevice);
     cudaMemcpy(gpu_clusters_y, clusters->y, cluster_bytes, cudaMemcpyHostToDevice);
     cudaMemcpy(closest_cluster, samples->cluster, closest_cluster_bytes, cudaMemcpyHostToDevice);
+    *millis_memcpy += stopKernelTime(&memcpyhd_start, &memcpyhd_stop);
 
-
-    calc_closest <<< num_blocks, BLOCK_SIZE >>>(gpu_samples_x, gpu_samples_y, n, gpu_clusters_x, gpu_clusters_y, k,
-                                                closest_cluster, changed_gpu);
+    startKernelTime(&kernel_start, &kernel_stop);
+    calc_closest <<< num_blocks, BLOCK_SIZE >>>(gpu_samples_x, gpu_samples_y, n, gpu_clusters_x, gpu_clusters_y, k, closest_cluster, changed_gpu);
+    *millis_kernel += stopKernelTime(&kernel_start, &kernel_stop);
 
     cudaDeviceSynchronize();
+
+    startKernelTime(&memcpydh_start, &memcpydh_stop);
     cudaMemcpy(samples->cluster, closest_cluster, closest_cluster_bytes, cudaMemcpyDeviceToHost);
     cudaMemcpy(changed_cpu, changed_gpu, changed_gpu_bytes, cudaMemcpyDeviceToHost);
-
-    stopKernelTime();
+    *millis_memcpy += stopKernelTime(&memcpydh_start, &memcpydh_stop);
 
     for (int i = 0; i < BLOCK_SIZE; i++) {
         cluster_changed += changed_cpu[i];

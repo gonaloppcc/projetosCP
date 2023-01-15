@@ -6,8 +6,6 @@
 #include <chrono>
 #include "../include/cp-utils.h"
 
-cudaEvent_t start, stop;
-
 using namespace std;
 
 void checkCUDAError (const char *msg) {
@@ -19,19 +17,19 @@ void checkCUDAError (const char *msg) {
 }
 
 // These are specific to measure the execution of only the kernel execution - might be useful
-void startKernelTime (void) {
-	cudaEventCreate(&start);
-	cudaEventCreate(&stop);
+void startKernelTime (cudaEvent_t *start, cudaEvent_t *stop) {
+	cudaEventCreate(start);
+	cudaEventCreate(stop);
 
-	cudaEventRecord(start);
+	cudaEventRecord(*start);
 }
 
-void stopKernelTime (void) {
-	cudaEventRecord(stop);
+float stopKernelTime (cudaEvent_t *start, cudaEvent_t *stop) {
+	cudaEventRecord(*stop);
 
-	cudaEventSynchronize(stop);
+	cudaEventSynchronize(*stop);
 	float milliseconds = 0;
-	cudaEventElapsedTime(&milliseconds, start, stop);
+	cudaEventElapsedTime(&milliseconds, *start, *stop);
 
-	cout << endl << "Basic profiling: " << milliseconds << " ms have elapsed for the kernel execution" << endl << endl;
+	return milliseconds;
 }
