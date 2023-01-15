@@ -122,6 +122,10 @@ SArray init_samples(int n) {
     cudaMalloc((void **) &gpu_samples_y, samples_bytes);
     cudaMalloc((void **) &closest_cluster, closest_cluster_bytes);
 
+    cudaMemcpy(gpu_samples_x, samples->x, samples_bytes, cudaMemcpyHostToDevice);
+    cudaMemcpy(gpu_samples_y, samples->y, samples_bytes, cudaMemcpyHostToDevice);
+    cudaMemcpy(closest_cluster, samples->cluster, closest_cluster_bytes, cudaMemcpyHostToDevice);
+
     return samples;
 }
 
@@ -156,11 +160,8 @@ int compute_samples(
     } // Complexity: K
 
     startKernelTime(&memcpyhd_start, &memcpyhd_stop);
-    cudaMemcpy(gpu_samples_x, samples->x, samples_bytes, cudaMemcpyHostToDevice);
-    cudaMemcpy(gpu_samples_y, samples->y, samples_bytes, cudaMemcpyHostToDevice);
     cudaMemcpy(gpu_clusters_x, clusters->x, cluster_bytes, cudaMemcpyHostToDevice);
     cudaMemcpy(gpu_clusters_y, clusters->y, cluster_bytes, cudaMemcpyHostToDevice);
-    cudaMemcpy(closest_cluster, samples->cluster, closest_cluster_bytes, cudaMemcpyHostToDevice);
     *millis_memcpy += stopKernelTime(&memcpyhd_start, &memcpyhd_stop);
 
     startKernelTime(&kernel_start, &kernel_stop);
